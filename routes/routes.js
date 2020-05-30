@@ -3,7 +3,7 @@ const {
   validateRegister,
   register,
   updateUserInfo,
-
+  getUserData,
   sendMail,
   verifyResetTokenAndLogin,
 } = require('../controllers/userController');
@@ -29,12 +29,8 @@ router.post(
 router.post('/api/v1/login', localVerify, generateAndSendJwtToken);
 router.put('/api/v1/update', jwtVerify, updateUserInfo);
 
-// check if that users exists
-// set resetToken and time and save that to db
-// send the mail with token
-// if token is valid update the user ans set token to undefined
-
 router.post('/api/v1/forgot', sendMail);
 router.post('/api/v1/forgot/verify', verifyResetTokenAndLogin);
+router.get('/api/v1/user', getUserData);
 
 module.exports = router;

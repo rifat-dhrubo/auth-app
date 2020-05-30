@@ -66,36 +66,6 @@ const updateUserInfo = async (req, res) => {
   return res.json({ data: updatedUser });
 };
 
-const resetPassword = async (req, res) => {
-  res.json({ message: 'reset Email' });
-};
-
-const verifyResetTokenAndLogin = async (req, res) => {
-  const { token: resetToken } = req.body;
-
-  try {
-    const decoded = jwt.verify(resetToken, process.env.SECRET);
-    const { _id } = decoded;
-
-    const token = generateJwtToken(_id);
-
-    const [userDataError, user] = await asyncHandler(User.findById(_id).exec());
-
-    if (userDataError) {
-      return res.json({ error: userDataError });
-    }
-
-    return res.json({
-      isLoggedIn: true,
-      token,
-      data: user,
-    });
-  } catch (error) {
-    console.log('here');
-    return res.json(error);
-  }
-};
-
 const sendMail = async (req, res) => {
   const { email } = req.body;
   const [noUserFoundErr, user] = await asyncHandler(User.findOne({ email }));
@@ -136,11 +106,55 @@ const sendMail = async (req, res) => {
   });
 };
 
+const verifyResetTokenAndLogin = async (req, res) => {
+  const { token: resetToken } = req.body;
+
+  try {
+    const decoded = jwt.verify(resetToken, process.env.SECRET);
+    const { _id } = decoded;
+
+    const token = generateJwtToken(_id);
+
+    const [userDataError, user] = await asyncHandler(User.findById(_id).exec());
+
+    if (userDataError) {
+      return res.json({ error: userDataError });
+    }
+
+    return res.json({
+      isLoggedIn: true,
+      token,
+      data: user,
+    });
+  } catch (error) {
+    console.log('here');
+    return res.json(error);
+  }
+};
+
+const getUserData = async (req, res) => {
+  const page = req.params.page || 1;
+  const limit = 4;
+  const skip = page * limit - limit;
+
+  // 1. Query the database for a list of all stores
+  const storesPromise = User.find()
+    .skip(skip)
+    .limit(limit)
+    .sort({ name: 'desc' });
+
+  const countPromise = User.count();
+
+  const [user, count] = await Promise.all([storesPromise, countPromise]);
+  const pages = Math.ceil(count / limit);
+  res.json({ user, count, pages });
+};
+
 module.exports = {
   register,
   validateRegister,
   updateUserInfo,
-  resetPassword,
   sendMail,
   verifyResetTokenAndLogin,
+  getUserData,
 };
