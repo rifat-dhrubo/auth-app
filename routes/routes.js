@@ -1,10 +1,15 @@
 const express = require('express');
 
 const router = express.Router();
-const { validateRegister, register } = require('../controllers/userController');
+const {
+  validateRegister,
+  register,
+  updateUser,
+} = require('../controllers/userController');
 const {
   localVerify,
-  generateJwtToken,
+  generateAndSendJwtToken,
+  jwtVerify,
 } = require('../controllers/authController');
 
 router.get('/', (req, res) => {
@@ -16,8 +21,9 @@ router.post(
   validateRegister,
   register,
   localVerify,
-  generateJwtToken
+  generateAndSendJwtToken
 );
-router.post('/api/v1/login', localVerify, generateJwtToken);
+router.post('/api/v1/login', localVerify, generateAndSendJwtToken);
+router.put('/api/v1/update', jwtVerify, updateUser);
 
 module.exports = router;

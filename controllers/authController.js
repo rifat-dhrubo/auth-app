@@ -4,16 +4,15 @@ const Jwt = require('jsonwebtoken');
 const localVerify = passport.authenticate('local', { session: false });
 const jwtVerify = passport.authenticate('jwt', { session: false });
 
-const generateJwtToken = (req, res) => {
-  const { name, email, phone, _id: id } = req.user;
+const generateJwtToken = (user) => {
+  const { name, email, phone, _id } = user;
 
-  const token = `Bearer ${Jwt.sign(
-    { name, email, phone, id },
-    process.env.SECRET,
-    {
-      expiresIn: 86400,
-    }
-  )}`;
+  return `Bearer ${Jwt.sign({ name, email, phone, _id }, process.env.SECRET, {
+    expiresIn: 86400,
+  })}`;
+};
+const generateAndSendJwtToken = (req, res) => {
+  const token = generateJwtToken(req.user);
 
   res.json({
     isLoggedIn: true,
@@ -21,4 +20,9 @@ const generateJwtToken = (req, res) => {
   });
 };
 
-module.exports = { localVerify, jwtVerify, generateJwtToken };
+module.exports = {
+  localVerify,
+  jwtVerify,
+  generateJwtToken,
+  generateAndSendJwtToken,
+};

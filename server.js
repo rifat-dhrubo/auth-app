@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 const express = require('express');
 const bodyParser = require('body-parser');
 const passport = require('passport');
@@ -20,7 +21,6 @@ passport.use(
       secretOrKey: process.env.SECRET,
     },
     (payload, done) => {
-      console.log(payload);
       User.findById(payload._id)
         .then((user) => {
           if (user) {
@@ -36,6 +36,6 @@ passport.use(
   )
 );
 
-module.exports = app;
-
 app.use('/', router);
+
+module.exports = app;

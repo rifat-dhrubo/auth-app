@@ -1,6 +1,8 @@
+/* eslint-disable no-underscore-dangle */
 const { body, validationResult } = require('express-validator');
 const User = require('../Models/User');
 const { asyncHandler } = require('../utils/errorHandler');
+const { generateJwtToken } = require('./authController');
 
 const validateRegister = [
   body('name', 'You must provide a name')
@@ -40,6 +42,26 @@ const register = async (req, res, next) => {
   return next();
 };
 
-// const login = (req, res) => {};
+const updateUser = async (req, res) => {
+  const updates = {
+    name: req.body.name,
+    email: req.body.email,
+    phone: req.body.phone,
+  };
 
-module.exports = { register, validateRegister };
+  const [updateUserError, updatedUser] = await asyncHandler(
+    User.findByIdAndUpdate(
+      req.user._id,
+      { $set: updates },
+      { new: true, runValidators: true, context: 'query' }
+    )
+  );
+
+  if (updateUserError) {
+    return res.json({ error: updateUserError });
+  }
+  const token = generateJwtToken(req.user);
+  return res.json({ data: updatedUser, token });
+};
+
+module.exports = { register, validateRegister, updateUser };
