@@ -23,8 +23,6 @@ const userSchema = new mongoose.Schema({
     maxlength: 11,
     required: 'Please provide a phone number',
   },
-  resetPasswordToken: String,
-  resetPasswordExpires: Date,
 });
 
 userSchema.plugin(passportLocalMongoose, {

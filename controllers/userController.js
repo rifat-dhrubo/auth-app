@@ -1,7 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 const { body, validationResult } = require('express-validator');
+const jwt = require('jsonwebtoken');
 const User = require('../Models/User');
 const { asyncHandler } = require('../utils/errorHandler');
+const emailSender = require('../utils/mail');
 const { generateJwtToken } = require('./authController');
 
 const validateRegister = [
@@ -42,7 +44,7 @@ const register = async (req, res, next) => {
   return next();
 };
 
-const updateUser = async (req, res) => {
+const updateUserInfo = async (req, res) => {
   const updates = {
     name: req.body.name,
     email: req.body.email,
@@ -60,8 +62,85 @@ const updateUser = async (req, res) => {
   if (updateUserError) {
     return res.json({ error: updateUserError });
   }
-  const token = generateJwtToken(req.user);
-  return res.json({ data: updatedUser, token });
+
+  return res.json({ data: updatedUser });
 };
 
-module.exports = { register, validateRegister, updateUser };
+const resetPassword = async (req, res) => {
+  res.json({ message: 'reset Email' });
+};
+
+const verifyResetTokenAndLogin = async (req, res) => {
+  const { token: resetToken } = req.body;
+
+  try {
+    const decoded = jwt.verify(resetToken, process.env.SECRET);
+    const { _id } = decoded;
+
+    const token = generateJwtToken(_id);
+
+    const [userDataError, user] = await asyncHandler(User.findById(_id).exec());
+
+    if (userDataError) {
+      return res.json({ error: userDataError });
+    }
+
+    return res.json({
+      isLoggedIn: true,
+      token,
+      data: user,
+    });
+  } catch (error) {
+    console.log('here');
+    return res.json(error);
+  }
+};
+
+const sendMail = async (req, res) => {
+  const { email } = req.body;
+  const [noUserFoundErr, user] = await asyncHandler(User.findOne({ email }));
+
+  if (noUserFoundErr) {
+    return res.json({ error: noUserFoundErr });
+  }
+
+  const { _id } = user;
+  const resetPasswordToken = jwt.sign({ _id }, process.env.SECRET, {
+    expiresIn: 3600000,
+  });
+
+  const resetURL = `http://${req.headers.host}/api/v1/forgot/${resetPasswordToken}`;
+
+  const [sendMailError] = await asyncHandler(
+    emailSender.send({
+      template: 'password-reset',
+      message: {
+        from: 'Rifat Hossain <rifat@gmail.com>',
+        to: user.email,
+      },
+      locals: {
+        name: user.name,
+        resetURL,
+      },
+    })
+  );
+
+  if (sendMailError) {
+    console.log(`here`);
+    return res.json({ error: sendMailError });
+  }
+
+  return res.json({
+    data: user,
+    resetURL,
+  });
+};
+
+module.exports = {
+  register,
+  validateRegister,
+  updateUserInfo,
+  resetPassword,
+  sendMail,
+  verifyResetTokenAndLogin,
+};
