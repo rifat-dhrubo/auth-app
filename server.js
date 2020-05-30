@@ -13,6 +13,28 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 
 passport.use(User.createStrategy());
+passport.use(
+  new passportJwt.Strategy(
+    {
+      jwtFromRequest: passportJwt.ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: process.env.SECRET,
+    },
+    (payload, done) => {
+      console.log(payload);
+      User.findById(payload._id)
+        .then((user) => {
+          if (user) {
+            done(null, user);
+          } else {
+            done(null, false);
+          }
+        })
+        .catch((error) => {
+          done(error, false);
+        });
+    }
+  )
+);
 
 module.exports = app;
 
