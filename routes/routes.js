@@ -28,6 +28,9 @@ router.post(
 );
 router.post('/api/v1/login', localVerify, generateAndSendJwtToken);
 router.put('/api/v1/update', jwtVerify, updateUserInfo);
+router.post('/api/v1/verify', jwtVerify, (req, res) => {
+  res.json({ isLoggedIn: true });
+});
 
 router.post('/api/v1/forgot', sendMail);
 router.post('/api/v1/forgot/verify', verifyResetTokenAndLogin);
