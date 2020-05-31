@@ -68,10 +68,15 @@ const updateUserInfo = async (req, res) => {
 
 const sendMail = async (req, res) => {
   const { email } = req.body;
+  console.log(req.body);
   const [noUserFoundErr, user] = await asyncHandler(User.findOne({ email }));
 
   if (noUserFoundErr) {
     return res.json({ error: noUserFoundErr });
+  }
+
+  if (user == null) {
+    res.json({ found: false, error: 'No user found' });
   }
 
   const { _id } = user;
@@ -79,7 +84,7 @@ const sendMail = async (req, res) => {
     expiresIn: 3600000,
   });
 
-  const resetURL = `http://${req.headers.host}/api/v1/forgot/${resetPasswordToken}`;
+  const resetURL = `http://127.0.0.1:3000/resetVerify/${resetPasswordToken}`;
 
   const [sendMailError] = await asyncHandler(
     emailSender.send({
@@ -128,7 +133,7 @@ const verifyResetTokenAndLogin = async (req, res) => {
     });
   } catch (error) {
     console.log('here');
-    return res.json(error);
+    return res.json({ error });
   }
 };
 

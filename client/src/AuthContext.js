@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(function isUserLoggedIn() {
     async function fetchData() {
       const token = localStorage.getItem('auth-app');
-      await fetch('api/v1/verify', {
+      await fetch('/api/v1/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

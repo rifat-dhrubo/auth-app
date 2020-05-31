@@ -1,7 +1,8 @@
 import React, { useState, useRef, useLayoutEffect, useContext } from 'react';
+import { useParams, navigate } from '@reach/router';
 import styled from '@emotion/styled';
 import { useForm } from 'react-hook-form';
-import { Link, navigate } from '@reach/router';
+
 import { useAlert } from 'react-alert';
 import { grey } from './utils/colors';
 import enter from './assets/enter.svg';
@@ -9,35 +10,27 @@ import { Log, Content } from './utils/FormComponent';
 import { AuthContext } from './AuthContext';
 
 const Login = () => {
-  const { register, handleSubmit, errors } = useForm({});
+  const { register, handleSubmit, errors, getValues } = useForm({});
+  const { setIsLoggedIn, setCurrentUser } = useContext(AuthContext);
   const [formData, setFormData] = useState({});
   const firstRender = useRef(false);
   const alert = useAlert();
-  const { isLoggedIn, setIsLoggedIn, setCurrentUser } = useContext(AuthContext);
+  const { token } = useParams();
 
   const onSubmit = async (data) => setFormData(data);
 
   useLayoutEffect(() => {
-    // checking if user is authenticated if so canceling request
-    if (isLoggedIn) {
-      setTimeout(() => {
-        navigate('info');
-        alert.info('You are already logged in');
-      }, 1000);
-
-      return;
-    }
     if (firstRender.current === false) {
       firstRender.current = true;
       return;
     }
 
     // encoding data for sending to server
-    const encodedData = JSON.stringify(formData);
-
+    const encodedData = JSON.stringify({ token });
+    console.log(encodedData);
     // making request to the register endpoint at server
     async function setData() {
-      await fetch('/api/v1/login', {
+      await fetch('/api/v1/forgot/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -57,33 +50,19 @@ const Login = () => {
             localStorage.setItem('auth-app', `${response.token}`);
             setCurrentUser(response.data);
             setIsLoggedIn(true);
-            navigate('info');
+            navigate('/info');
           }
         });
     }
 
     setData();
-  }, [alert, formData, isLoggedIn, setCurrentUser, setIsLoggedIn]);
+  }, [alert, formData, setCurrentUser, setIsLoggedIn, token]);
 
   return (
     <Wrapper>
       <Log>
         <form className="form-control" onSubmit={handleSubmit(onSubmit)}>
-          <h1>Log in to your account</h1>
-          <label htmlFor="mail">
-            Email
-            <input
-              type="text"
-              placeholder="email"
-              name="email"
-              ref={register({
-                required: 'You must specify an email',
-                pattern: /^\S+@\S+$/i,
-              })}
-            />
-          </label>
-
-          {errors.email && <p className="error">You must specify an email</p>}
+          <h1>Reset your password</h1>
 
           <label htmlFor="password">
             Password
@@ -92,7 +71,10 @@ const Login = () => {
               name="password"
               ref={register({
                 required: 'You must specify a password',
-                min: 6,
+                minLength: {
+                  value: 6,
+                  message: 'The password must be 6 characters or more',
+                },
                 validate: (value) => {
                   const message =
                     'Password must contain at least one letter, at least one number, and be longer than six characters';
@@ -110,25 +92,29 @@ const Login = () => {
             <p className="error">{errors.password.message}</p>
           )}
 
-          <input
-            className="submit"
-            type="submit"
-            onClick={handleSubmit(onSubmit)}
-          />
-          <p>
-            {/* eslint-disable-next-line react/no-unescaped-entities */}
-            Don't have an account?{' '}
-            <Link className="link" to="/register">
-              Sign up
-            </Link>
-          </p>
-          <p>
-            {/* eslint-disable-next-line react/no-unescaped-entities */}
-            Forgot Password?{' '}
-            <Link className="link" to="/reset">
-              Reset Password
-            </Link>
-          </p>
+          <label htmlFor="passwordConfirm">
+            Confirm Password
+            <input
+              type="password"
+              name="passwordConfirm"
+              ref={register({
+                required: 'You must specify the confirm Password',
+
+                validate: (value) => {
+                  const message = 'confirm password do not match the password';
+                  const password = getValues('password');
+                  if (value === password) return true;
+                  return message;
+                },
+              })}
+            />
+          </label>
+
+          {errors.passwordConfirm && (
+            <p className="error">{errors.passwordConfirm.message}</p>
+          )}
+
+          <input className="submit" type="submit" />
         </form>
       </Log>
       <Content>

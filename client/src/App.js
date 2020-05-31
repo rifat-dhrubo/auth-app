@@ -6,6 +6,8 @@ import Landing from './Landing';
 import Login from './Login';
 import Register from './Register';
 import Info from './Info';
+import Reset from './Reset';
+import ResetVerify from './ResetVerify';
 import { AuthProvider } from './AuthContext';
 
 const options = {
@@ -24,6 +26,8 @@ function App() {
             <Register path="register" />
             <Login path="login" />
             <Info path="info" />
+            <Reset path="reset" />
+            <ResetVerify path="resetVerify/:token" />
           </Router>
         </AuthProvider>
       </Provider>
