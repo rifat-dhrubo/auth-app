@@ -143,7 +143,7 @@ const getUserData = async (req, res) => {
     .limit(limit)
     .sort({ name: 'desc' });
 
-  const countPromise = User.count();
+  const countPromise = User.countDocuments();
 
   const [user, count] = await Promise.all([storesPromise, countPromise]);
   const pages = Math.ceil(count / limit);
