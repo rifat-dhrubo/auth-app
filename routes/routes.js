@@ -6,11 +6,13 @@ const {
   getUserData,
   sendMail,
   verifyResetTokenAndLogin,
+  verifyEmail,
 } = require('../controllers/userController');
 const {
   localVerify,
   generateAndSendJwtToken,
   jwtVerify,
+  jwtVerifyWithResponse,
 } = require('../controllers/authController');
 
 const router = express.Router();
@@ -26,10 +28,11 @@ router.post(
   localVerify,
   generateAndSendJwtToken
 );
-router.post('/api/v1/login', localVerify, generateAndSendJwtToken);
+router.post('/api/v1/login', jwtVerify, generateAndSendJwtToken);
 router.put('/api/v1/update', jwtVerify, updateUserInfo);
-router.post('/api/v1/verify', jwtVerify, (req, res) => {
-  res.json({ isLoggedIn: true });
+router.post('/api/v1/email/verify', verifyEmail);
+router.post('/api/v1/verify', (req, res) => {
+  jwtVerifyWithResponse(req, res);
 });
 
 router.post('/api/v1/forgot', sendMail);

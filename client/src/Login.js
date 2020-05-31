@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect } from 'react';
+import React, { useState, useRef, useLayoutEffect, useContext } from 'react';
 import styled from '@emotion/styled';
 import { useForm } from 'react-hook-form';
 import { Link, navigate } from '@reach/router';
@@ -6,21 +6,32 @@ import { useAlert } from 'react-alert';
 import { grey } from './utils/colors';
 import enter from './assets/enter.svg';
 import { Log, Content } from './utils/FormComponent';
+import { AuthContext } from './AuthContext';
 
 const Login = () => {
   const { register, handleSubmit, errors } = useForm({});
   const [formData, setFormData] = useState({});
-  const firstUpdate = useRef(true);
+  const firstRender = useRef(false);
   const alert = useAlert();
+  const { isLoggedIn, setIsLoggedIn, setCurrentUser } = useContext(AuthContext);
 
   const onSubmit = async (data) => setFormData(data);
 
   useLayoutEffect(() => {
-    // checking if its the initial mount if so canceling request
-    if (firstUpdate.current) {
-      firstUpdate.current = false;
+    // checking if user is authenticated if so canceling request
+    if (isLoggedIn) {
+      setTimeout(() => {
+        navigate('info');
+        alert.info('You are already logged in');
+      }, 1000);
+
       return;
     }
+    if (firstRender.current === false) {
+      firstRender.current = true;
+      return;
+    }
+
     // encoding data for sending to server
     const encodedData = JSON.stringify(formData);
 
@@ -44,13 +55,15 @@ const Login = () => {
           console.log(response);
           if (response.isLoggedIn === true) {
             localStorage.setItem('auth-app', `${response.token}`);
+            setCurrentUser(response.data);
+            setIsLoggedIn(true);
             navigate('info');
           }
         });
     }
 
     setData();
-  }, [alert, formData]);
+  }, [alert, formData, isLoggedIn, setCurrentUser, setIsLoggedIn]);
 
   return (
     <Wrapper>

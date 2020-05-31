@@ -149,6 +149,7 @@ const getUserData = async (req, res) => {
   const pages = Math.ceil(count / limit);
   res.json({ user, count, pages });
 };
+const verifyEmail = (req, res) => {};
 
 module.exports = {
   register,
@@ -157,4 +158,5 @@ module.exports = {
   sendMail,
   verifyResetTokenAndLogin,
   getUserData,
+  verifyEmail,
 };

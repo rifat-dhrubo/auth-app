@@ -6,6 +6,7 @@ import Landing from './Landing';
 import Login from './Login';
 import Register from './Register';
 import Info from './Info';
+import { AuthProvider } from './AuthContext';
 
 const options = {
   timeout: 3000,
@@ -17,12 +18,14 @@ function App() {
     <>
       {/* eslint-disable-next-line react/jsx-props-no-spreading */}
       <Provider template={AlertTemplate} {...options}>
-        <Router>
-          <Landing path="/" />
-          <Register path="register" />
-          <Login path="login" />
-          <Info path="info" />
-        </Router>
+        <AuthProvider>
+          <Router>
+            <Landing path="/" />
+            <Register path="register" />
+            <Login path="login" />
+            <Info path="info" />
+          </Router>
+        </AuthProvider>
       </Provider>
     </>
   );

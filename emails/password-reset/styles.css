@@ -209,6 +209,11 @@ a {
 	margin-bottom: 0;
 }
 
+.link {
+	display: inline-block;
+	word-break: break-all;
+}
+
 .preheader {
 	color: transparent;
 	display: none;

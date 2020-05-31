@@ -1,44 +1,15 @@
+/* eslint-disable no-underscore-dangle */
 import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
-import { useAlert } from 'react-alert';
-import { navigate } from '@reach/router';
 import { black, grey } from './utils/colors';
 import Data from './Data';
+// import { AuthContext } from './AuthContext';
 
 const Info = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userData, setUserData] = useState([]);
-  const alert = useAlert();
-
-  useEffect(
-    function isUserLoggedIn() {
-      async function fetchData() {
-        const token = localStorage.getItem('auth-app');
-        await fetch('/api/v1/verify', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: token,
-          },
-        })
-          .then((response) => {
-            if (response.status === 401) {
-              alert.error('Your are not logged in');
-              navigate('login');
-            }
-            return response.json();
-          })
-          .then((response) => {
-            if (response.isLoggedIn === true) {
-              setIsLoggedIn(true);
-              alert.success('You are now logged in');
-            }
-          });
-      }
-      if (!isLoggedIn) fetchData();
-    },
-    [alert, isLoggedIn]
-  );
+  const [allUserData, setAllUserData] = useState([]);
+  // const { isLoggedIn, setIsLoggedIn, currentUser, setCurrentUser } = useContext(
+  //   AuthContext
+  // );
 
   useEffect(function loadProductData() {
     async function fetchData() {
@@ -46,7 +17,7 @@ const Info = () => {
         response.json()
       );
 
-      setUserData(data.user);
+      setAllUserData(data.user);
     }
 
     fetchData();
@@ -55,28 +26,28 @@ const Info = () => {
   return (
     <Wrapper>
       <Row>
-        {userData.map((data) => {
+        {allUserData.map((data) => {
           return <Data key={data._id} data={data} />;
         })}
-        {userData.map((data) => {
+        {allUserData.map((data) => {
           return <Data key={data._id} data={data} />;
         })}
-        {userData.map((data) => {
+        {allUserData.map((data) => {
           return <Data key={data._id} data={data} />;
         })}
-        {userData.map((data) => {
+        {allUserData.map((data) => {
           return <Data key={data._id} data={data} />;
         })}
-        {userData.map((data) => {
+        {allUserData.map((data) => {
           return <Data key={data._id} data={data} />;
         })}
-        {userData.map((data) => {
+        {allUserData.map((data) => {
           return <Data key={data._id} data={data} />;
         })}
-        {userData.map((data) => {
+        {allUserData.map((data) => {
           return <Data key={data._id} data={data} />;
         })}
-        {userData.map((data) => {
+        {allUserData.map((data) => {
           return <Data key={data._id} data={data} />;
         })}
       </Row>

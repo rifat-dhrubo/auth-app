@@ -11,6 +11,7 @@ const app = express();
 // registering global middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(passport.initialize());
 
 passport.use(User.createStrategy());
@@ -22,6 +23,8 @@ passport.use(
     },
     (payload, done) => {
       User.findById(payload._id)
+        .lean()
+        .exec()
         .then((user) => {
           if (user) {
             done(null, user);

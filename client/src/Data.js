@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
-import { black, turquoise, lightBlack, grey } from './utils/colors';
+import { turquoise, lightBlack, grey } from './utils/colors';
 
 const Data = ({ data }) => {
   const { name, email, phone } = data;
+
   return (
     <Card>
       <div className="title">
@@ -24,7 +25,7 @@ Data.propTypes = {
 const Card = styled.div`
   padding: 10px;
   min-height: 200px;
-  flex-basis: 15%;
+  flex-basis: 25%;
   margin: 10% 1%;
   color: ${grey};
   background: ${lightBlack};
@@ -34,6 +35,13 @@ const Card = styled.div`
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
   transition: 0.18s all ease;
   border: 1px solid ${lightBlack};
+
+  @media only screen and (max-width: 1024px) {
+    flex-basis: 40%;
+  }
+  @media only screen and (max-width: 727px) {
+    flex-basis: 60%;
+  }
 
   &:hover {
     box-shadow: 0px 6px 6px rgba(0, 0, 0, 0.25);
