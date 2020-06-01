@@ -17,11 +17,10 @@ const generateHTML = (fileName, options = {}) => {
 const mailSender = async (options) => {
   const html = generateHTML(options.fileName, options);
   const mailOptions = {
-    from: `Rifat Hossain <rifat@gmail.com>`,
+    from: `${process.env.MAIL_SENDER} <${process.env.MAIL_ID}>`,
     to: options.email,
     subject: options.subject,
     html,
-    text: 'aaa',
   };
 
   return transporter.sendMail(mailOptions);

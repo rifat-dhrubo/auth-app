@@ -4,9 +4,10 @@ const {
   register,
   updateUserInfo,
   getUserData,
-  sendMail,
+  sendPasswordResetMail,
   verifyResetTokenAndLogin,
   validatePasswordReset,
+  verifyEmail,
 } = require('../controllers/userController');
 const {
   localVerify,
@@ -34,7 +35,7 @@ router.post('/api/v1/verify', (req, res) => {
   jwtVerifyWithResponse(req, res);
 });
 
-router.post('/api/v1/forgot', sendMail);
+router.post('/api/v1/forgot', sendPasswordResetMail);
 router.post(
   '/api/v1/forgot/verify',
   validatePasswordReset,
@@ -42,5 +43,6 @@ router.post(
 );
 router.get('/api/v1/user', getUserData);
 router.get('/api/v1/verify/:token', getUserData);
+router.get('/api/v1/verify/email/:token', verifyEmail);
 
 module.exports = router;

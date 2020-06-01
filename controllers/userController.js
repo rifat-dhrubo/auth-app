@@ -27,6 +27,14 @@ const validateRegister = [
   ),
 ];
 
+/**
+ *
+ *
+ * @method {*} POST
+ * @route {*} /api/v1/register
+ * @desc {*} saves validated user info to DB and sends mail to user
+ * @returns next
+ */
 const register = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -40,7 +48,7 @@ const register = async (req, res, next) => {
     expiresIn: 3600000,
   });
 
-  const verifyURL = `http://127.0.0.1:8000/verify/${verifyToken}`;
+  const verifyURL = `http://127.0.0.1:8000/api/v1/verify/email/${verifyToken}`;
 
   const [sendMailError, sendMail] = await asyncHandler(
     mailSender({
@@ -65,6 +73,14 @@ const register = async (req, res, next) => {
   return next();
 };
 
+/**
+ *
+ *
+ * @method {*} PUT
+ * @route {*} /api/v1/update
+ * @desc {*} updates a registered user
+ * @returns updated user json or error
+ */
 const updateUserInfo = async (req, res) => {
   const updates = {
     name: req.body.name || req.user.name,
@@ -83,7 +99,15 @@ const updateUserInfo = async (req, res) => {
   return res.json({ data: updatedUser });
 };
 
-const sendMail = async (req, res) => {
+/**
+ *
+ *
+ * @method {*} POST
+ * @route {*} /api/v1/forgot
+ * @desc {*} checks if a user exist and if does sends password reset mail
+ * @returns user data and resetURL
+ */
+const sendPasswordResetMail = async (req, res) => {
   const { email } = req.body;
   const [noUserFoundErr, user] = await asyncHandler(User.findOne({ email }));
   if (noUserFoundErr) {
@@ -123,6 +147,14 @@ const validatePasswordReset = [
   ),
 ];
 
+/**
+ *
+ *
+ * @method {*} POST
+ * @route {*} /api/v1/forgot/verify
+ * @desc {*} verifies reset token updates password and logs in user
+ * @returns error or user data and logged in info
+ */
 const verifyResetTokenAndLogin = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -162,28 +194,60 @@ const verifyResetTokenAndLogin = async (req, res) => {
   }
 };
 
+/**
+ *
+ *
+ * @method {*} GET
+ * @route {*} /api/v1/user
+ * @desc {*} Fetches all user data
+ * @returns user data or error
+ */
 const getUserData = async (req, res) => {
-  const page = req.params.page || 1;
-  const limit = 4;
-  const skip = page * limit - limit;
+  const page = req.query.page || 1;
+  const limit = 3;
+  const skip = Number(page * limit - limit);
 
-  // 1. Query the database for a list of all stores
-  const storesPromise = User.find()
+  console.log(page, limit, skip);
+
+  // 1. Query the database for a list of all user
+  const userPromise = User.find()
     .skip(skip)
     .limit(limit)
-    .sort({ name: 'desc' });
+    .sort({ createdAt: 'asc' });
 
   const countPromise = User.countDocuments();
 
-  const [user, count] = await Promise.all([storesPromise, countPromise]);
+  const [user, count] = await Promise.all([userPromise, countPromise]);
   const pages = Math.ceil(count / limit);
-  res.json({ user, count, pages });
+  const error = user.length === 0 ? 'Exceeded Limit' : false;
+  res.json({ user, count, pages, error });
 };
-const verifyEmail = (req, res) => {
-  const { token } = req.params;
 
+/**
+ *
+ *
+ * @method {*} GET
+ * @route {*} /api/v1/user
+ * @desc {*} Fetches all user data
+ * @returns user data or error
+ */
+const verifyEmail = async (req, res) => {
+  const { token } = req.params;
+  console.log(token);
   try {
-    jwt.verify(token, process.env.SECRET);
+    const decoded = jwt.verify(token, process.env.SECRET);
+    const { email } = decoded;
+    const [error, user] = await asyncHandler(
+      User.findOneAndUpdate({ email }, { verified: true }, { new: true })
+        .lean()
+        .exec()
+    );
+
+    console.log(user);
+
+    if (error) {
+      res.json({ error });
+    }
     res.json({
       data: {
         success: true,
@@ -191,7 +255,7 @@ const verifyEmail = (req, res) => {
       },
     });
   } catch (error) {
-    res.json({ error });
+    res.json(error);
   }
 };
 
@@ -199,7 +263,7 @@ module.exports = {
   register,
   validateRegister,
   updateUserInfo,
-  sendMail,
+  sendPasswordResetMail,
   verifyResetTokenAndLogin,
   getUserData,
   verifyEmail,

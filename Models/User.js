@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema(
       maxlength: 11,
       required: 'Please provide a phone number',
     },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
