@@ -9,6 +9,7 @@ import Info from './Info';
 import Reset from './Reset';
 import ResetVerify from './ResetVerify';
 import { AuthProvider } from './AuthContext';
+import Update from './Update';
 
 const options = {
   timeout: 3000,
@@ -28,6 +29,7 @@ function App() {
             <Info path="info" />
             <Reset path="reset" />
             <ResetVerify path="resetVerify/:token" />
+            <Update path="update" />
           </Router>
         </AuthProvider>
       </Provider>

@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(function isUserLoggedIn() {
     async function fetchData() {
       const token = localStorage.getItem('auth-app');
-      await fetch('/api/v1/verify', {
+      fetch('/api/v1/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -20,13 +20,11 @@ export const AuthProvider = ({ children }) => {
         if (data.isLoggedIn === true) {
           setIsLoggedIn(true);
           setCurrentUser(data.user);
-        } else {
-          setIsLoggedIn(false);
+          console.log('context changed');
         }
       });
     }
     fetchData();
-    console.log(`ran`);
   }, []);
 
   const defaultContext = {

@@ -1,11 +1,10 @@
-import React, { useState, useRef, useLayoutEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, navigate } from '@reach/router';
 import styled from '@emotion/styled';
 import { useForm } from 'react-hook-form';
-
 import { useAlert } from 'react-alert';
 import { grey } from './utils/colors';
-import enter from './assets/enter.svg';
+import verify from './assets/throw.svg';
 import { Log, Content } from './utils/FormComponent';
 import { AuthContext } from './AuthContext';
 
@@ -13,20 +12,19 @@ const Login = () => {
   const { register, handleSubmit, errors, getValues } = useForm({});
   const { setIsLoggedIn, setCurrentUser } = useContext(AuthContext);
   const [formData, setFormData] = useState({});
-  const firstRender = useRef(false);
   const alert = useAlert();
   const { token } = useParams();
 
   const onSubmit = async (data) => setFormData(data);
 
-  useLayoutEffect(() => {
-    if (firstRender.current === false) {
-      firstRender.current = true;
+  useEffect(() => {
+    if (Number(token.length) < 50) {
+      navigate('/login');
       return;
     }
-
+    if (Object.keys(formData).length === 0) return;
     // encoding data for sending to server
-    const encodedData = JSON.stringify({ token });
+    const encodedData = JSON.stringify({ token, ...formData });
     console.log(encodedData);
     // making request to the register endpoint at server
     async function setData() {
@@ -42,6 +40,9 @@ const Login = () => {
           if (response.status === 401) {
             alert.error('Wrong email or password');
           }
+          if (response.status === 422) {
+            alert.error('Password do not match');
+          }
           return response.json();
         })
         .then((response) => {
@@ -50,6 +51,7 @@ const Login = () => {
             localStorage.setItem('auth-app', `${response.token}`);
             setCurrentUser(response.data);
             setIsLoggedIn(true);
+            alert.success('Your password has been updated');
             navigate('/info');
           }
         });
@@ -118,7 +120,7 @@ const Login = () => {
         </form>
       </Log>
       <Content>
-        <img src={enter} alt="logging" />
+        <img src={verify} alt="logging" />
       </Content>
     </Wrapper>
   );

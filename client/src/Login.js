@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styled from '@emotion/styled';
 import { useForm } from 'react-hook-form';
 import { Link, navigate } from '@reach/router';
@@ -11,15 +11,15 @@ import { AuthContext } from './AuthContext';
 const Login = () => {
   const { register, handleSubmit, errors } = useForm({});
   const [formData, setFormData] = useState({});
-  const firstRender = useRef(false);
+  // const firstRender = useRef(true);
   const alert = useAlert();
-  const { isLoggedIn, setIsLoggedIn, setCurrentUser } = useContext(AuthContext);
+  const { setIsLoggedIn, setCurrentUser } = useContext(AuthContext);
 
   const onSubmit = async (data) => setFormData(data);
 
-  useLayoutEffect(() => {
-    // checking if user is authenticated if so canceling request
-    if (isLoggedIn) {
+  useEffect(() => {
+    // // checking if user is authenticated if so canceling request
+    if (localStorage.getItem('auth-app') != null) {
       setTimeout(() => {
         navigate('info');
         alert.info('You are already logged in');
@@ -27,10 +27,8 @@ const Login = () => {
 
       return;
     }
-    if (firstRender.current === false) {
-      firstRender.current = true;
-      return;
-    }
+
+    if (Object.keys(formData).length === 0) return;
 
     // encoding data for sending to server
     const encodedData = JSON.stringify(formData);
@@ -52,7 +50,6 @@ const Login = () => {
           return response.json();
         })
         .then((response) => {
-          console.log(response);
           if (response.isLoggedIn === true) {
             localStorage.setItem('auth-app', `${response.token}`);
             setCurrentUser(response.data);
@@ -63,7 +60,7 @@ const Login = () => {
     }
 
     setData();
-  }, [alert, formData, isLoggedIn, setCurrentUser, setIsLoggedIn]);
+  }, [alert, formData, setCurrentUser, setIsLoggedIn]);
 
   return (
     <Wrapper>
@@ -74,7 +71,6 @@ const Login = () => {
             Email
             <input
               type="text"
-              placeholder="email"
               name="email"
               ref={register({
                 required: 'You must specify an email',

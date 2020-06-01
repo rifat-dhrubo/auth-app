@@ -3,7 +3,7 @@ extends email-layout
 block content
   h2 Password Reset
   p Hello, #{name} . Please click on this button to verify your account. Please note this link is only valid for the next hour.
-  +button('ssd', 'Reset my Password →')
-  p.link If you can't click the above button please visit #{verifyURL}
+  +button(URL, 'Reset my Password →')
+  p.link If you can't click the above button please visit #{URL}
   br
   p If you didn't request this email, please ignore it.

@@ -1,9 +1,17 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { Link } from '@reach/router';
+import { Link, navigate } from '@reach/router';
+import { useAlert } from 'react-alert';
 import { black, grey, turquoise } from './utils/colors';
 
 function Landing() {
+  const alert = useAlert();
+  const handleInfo = () => {
+    if (localStorage.getItem('auth-app') == null) {
+      alert.error('You must be logged in');
+      navigate('login');
+    }
+  };
   return (
     <Wrapper>
       <Hero>
@@ -11,9 +19,14 @@ function Landing() {
         <h2>This is a cool web site.</h2>
       </Hero>
       <Content>
-        <Button to="/info" type="button" className="primary">
+        <button
+          to="/info"
+          type="button"
+          className="primary"
+          onClick={handleInfo}
+        >
           Info
-        </Button>
+        </button>
         <Button to="/login" type="button" className="secondary">
           Log in
         </Button>
@@ -63,6 +76,18 @@ const Content = styled.div`
   padding: 0 1rem;
 
   & .primary {
+    cursor: pointer;
+    width: 20%;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    margin: 0.5rem;
+    font-family: inherit;
+    font-weight: 800;
+    text-align: center;
+    font-size: calc(16px + 2vw);
+    border: 0px;
+    transition: all 0.3s ease-in-out;
+    padding: 10px;
+    text-decoration: none;
     background: ${turquoise};
     color: ${grey};
     :active {

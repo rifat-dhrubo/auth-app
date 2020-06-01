@@ -1,27 +1,33 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
+import { navigate } from '@reach/router';
+import { useAlert } from 'react-alert';
 import { black, grey } from './utils/colors';
 import Data from './Data';
-// import { AuthContext } from './AuthContext';
 
 const Info = () => {
   const [allUserData, setAllUserData] = useState([]);
-  // const { isLoggedIn, setIsLoggedIn, currentUser, setCurrentUser } = useContext(
-  //   AuthContext
-  // );
+  const alert = useAlert();
 
-  useEffect(function loadProductData() {
-    async function fetchData() {
-      const data = await fetch('api/v1/user').then((response) =>
-        response.json()
-      );
+  useEffect(
+    function loadProductData() {
+      if (localStorage.getItem('auth-app') == null) {
+        alert.error(' You must log in to view this');
+        navigate('login');
+      }
+      async function fetchData() {
+        const data = await fetch('api/v1/user').then((response) =>
+          response.json()
+        );
 
-      setAllUserData(data.user);
-    }
+        setAllUserData(data.user);
+      }
 
-    fetchData();
-  }, []);
+      fetchData();
+    },
+    [alert]
+  );
 
   return (
     <Wrapper>

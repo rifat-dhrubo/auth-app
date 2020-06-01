@@ -3,7 +3,7 @@ extends email-layout
 block content
   h2 Password Reset
   p Hello, #{name} . You have requested a password reset. Please click the following button to continue on with resetting your password. Please note this link is only valid for the next hour.
-  +button(resetURL, 'Reset my Password →')
-  p.link If you can't click the above button please visit #{resetURL}
+  +button(URL, 'Reset my Password →')
+  p.link If you can't click the above button please visit #{URL}
   br
   p If you didn't request this email, please ignore it.

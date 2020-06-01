@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useForm } from 'react-hook-form';
 import { navigate } from '@reach/router';
@@ -10,18 +10,15 @@ import { Log, Content } from './utils/FormComponent';
 const Register = () => {
   const { register, handleSubmit, errors, getValues } = useForm({});
   const [formData, setFormData] = useState({});
-  const firstUpdate = useRef(true);
+
   const alert = useAlert();
   const onSubmit = (data) => {
     setFormData(data);
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     // checking if its the initial mount if so canceling request
-    if (firstUpdate.current) {
-      firstUpdate.current = false;
-      return;
-    }
+    if (Object.keys(formData).length === 0) return;
     // encoding data for sending to server
     const encodedData = JSON.stringify(formData);
 

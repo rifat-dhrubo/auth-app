@@ -25,6 +25,7 @@ const generateJwtToken = (_id) => {
   })}`;
 };
 const generateAndSendJwtToken = (req, res) => {
+  console.log(req.user);
   const { _id, name, email, phone } = req.user;
   const user = { _id, name, email, phone };
 
