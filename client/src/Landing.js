@@ -10,7 +10,9 @@ function Landing() {
     if (localStorage.getItem('auth-app') == null) {
       alert.error('You must be logged in');
       navigate('login');
+      return
     }
+    navigate('info')
   };
   return (
     <Wrapper>

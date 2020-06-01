@@ -42,7 +42,6 @@ router.post(
   verifyResetTokenAndLogin
 );
 router.get('/api/v1/user', getUserData);
-router.get('/api/v1/verify/:token', getUserData);
 router.get('/api/v1/verify/email/:token', verifyEmail);
 
 module.exports = router;
