@@ -2,7 +2,7 @@
 
 ## What is Microservice Architecture
 
-Microservice architecture is a way of developing an application where the functionalities are broken up into small services. This is like the ***Single Responsibility Principle***, where things that do one thing are bunched together. Like that, an application might do different things. So, we identify these fundamental services or concepts that do one or the same thing, then build and compose them together to form an application.
+Microservice architecture is a way of developing an application where the functionalities are broken up into small services. This is like the ***Single Responsibility Principle***, where things that do one thing are bunched together. Like that, an application might do different things. So, we identify the fundamental services or concepts that do one or the same thing, then build and compose them together to form an application.
 
 ## Basic Nature of Microservices
 
