@@ -6,13 +6,13 @@ Microservice architecture is a way of developing an application where the functi
 
 ## Basic Nature of Microservices
 
-So first the services are recognized. Usually, a development team is assigned one microservice. There is no standard of how big the team can be. Like Amazon's *Two Pizza Rule* a team can consist of 12 programmers responsible for a single service or 12 programmers can be responsible for 12 different microservice.
+So first the services are recognized. Usually, a development team is assigned one microservice. There is no standard for how big the team should be. Like Amazon's *Two Pizza Rule* a team can consist of 12 programmers responsible for a single service or 12 programmers can be responsible for 12 different microservices.
 
 The teams are often cross-functional or in other words, they are built around business capability. So a team can have UI/UX engineers, front-end devs, back-end devs, DevOps, and other collaborators.
 
-After the division, each microservices are essentially built like a black box. They have their implementation and database. Implementation details are hidden away and only some basic endpoints or functions are exposed to the outside. Then through a messaging service or rest API, each microservice is connected to form a complete application.
+After the division, each microservices are essentially built like a black box. They have their own implementation and database. Implementation details are hidden away and only some basic endpoints or functions are exposed to the outside. Then through a messaging service or rest API, each microservice is connected to form a complete application.
 
-The connection is often kept dumb. Meaning they carry only data from one microservice to another. They do not have inner knowledge of how any of them work. This helps in the context wherein a service-oriented model the ESB contains domain-specific code and may become a large point of failure.
+The connection is often kept dumb. Meaning they carry only data from one microservice to another. They do not have inner knowledge of how any of them work. This helps to keep the messaging service clean. Wherein a service-oriented model the ESB contains domain-specific code and may become a large point of failure.
 
 After integration and tests. Microservices go through an automated deployment.
 
