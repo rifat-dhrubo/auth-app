@@ -1,7 +1,6 @@
 import React, { useState, useRef, useLayoutEffect } from 'react';
 import styled from '@emotion/styled';
 import { useForm } from 'react-hook-form';
-import { navigate } from '@reach/router';
 import { useAlert } from 'react-alert';
 import { grey } from './utils/colors';
 import reset from './assets/reset.svg';

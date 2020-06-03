@@ -207,8 +207,6 @@ const getUserData = async (req, res) => {
   const limit = 3;
   const skip = Number(page * limit - limit);
 
-  console.log(page, limit, skip);
-
   // 1. Query the database for a list of all user
   const userPromise = User.find()
     .skip(skip)

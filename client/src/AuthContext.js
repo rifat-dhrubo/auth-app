@@ -20,7 +20,6 @@ export const AuthProvider = ({ children }) => {
         if (data.isLoggedIn === true) {
           setIsLoggedIn(true);
           setCurrentUser(data.user);
-          console.log('context changed');
         }
       });
     }

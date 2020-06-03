@@ -7,6 +7,11 @@
 - yarn install or npm install
 - yarn dev or npm run dev
 
+Log in information for client app
+
+email: jdoe@gmail.com
+password: 123456a
+
 Environment variables are available from .env file. This app used mailtrap for email testing. A mailtrap account can be accessed via github account. For that MAIL_USER and MAIL_PASS need to be changed.
 
 ## API Documentation

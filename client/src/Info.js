@@ -6,6 +6,7 @@ import { useAlert } from 'react-alert';
 import ReactPaginate from 'react-paginate';
 import { black, grey, lightBlack, turquoise } from './utils/colors';
 import Data from './Data';
+import Navbar from './Navbar';
 
 const Info = () => {
   const [allUserData, setAllUserData] = useState([]);
@@ -20,7 +21,6 @@ const Info = () => {
   };
   useEffect(
     function loadProductData() {
-      console.log(`fired`);
       if (localStorage.getItem('auth-app') == null) {
         alert.error(' You must log in to view this');
         navigate('login');
@@ -42,6 +42,7 @@ const Info = () => {
 
   return (
     <Wrapper>
+      <Navbar />
       <Row>
         {allUserData.map((data) => {
           return <Data key={data._id} data={data} />;
@@ -57,6 +58,7 @@ const Info = () => {
           marginPagesDisplayed={2}
           pageRangeDisplayed={2}
           onPageChange={handlePageClick}
+          activeClassName="active"
         />
       </div>
     </Wrapper>
@@ -76,6 +78,11 @@ const Wrapper = styled.div`
     display: flex;
     flex-basis: 60%;
     margin: auto;
+
+    & .active {
+      color: ${turquoise};
+      font-weight: 800;
+    }
 
     ul {
       display: flex;
