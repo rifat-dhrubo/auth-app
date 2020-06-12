@@ -4,6 +4,9 @@
 
 - Clone this repository.
 - cd auth-app
+- cd client
+- yarn install or npm install
+- cd ..
 - yarn install or npm install
 - yarn dev or npm run dev
 
